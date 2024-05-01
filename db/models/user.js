@@ -17,9 +17,33 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        validate: { isEmail: { args: true, msg: "Wrong email format!" } },
       },
-      first_name: DataTypes.STRING,
-      last_name: DataTypes.STRING,
+      first_name: {
+        type: DataTypes.STRING,
+        validate: {
+          validCharacters: function (value) {
+            if (!/^[A-Za-z\-]+$/.test(value)) {
+              throw new Error(
+                "First name can only contain letters and dashes (-)"
+              );
+            }
+          },
+        },
+      },
+
+      last_name: {
+        type: DataTypes.STRING,
+        validate: {
+          validCharacters: function (value) {
+            if (!/^[A-Za-z\-]+$/.test(value)) {
+              throw new Error(
+                "Last name can only contain letters and dashes (-)"
+              );
+            }
+          },
+        },
+      },
     },
     {
       sequelize,
