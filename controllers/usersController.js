@@ -13,7 +13,7 @@ class UsersController extends BaseController {
         first_name,
         last_name,
       });
-      return res.json(user);
+      return res.json(user.id);
     } catch (err) {
       console.log(err.message);
       return res.status(400).json({ error: true, msg: err.message });
@@ -49,7 +49,13 @@ class UsersController extends BaseController {
         where: { email: email },
       });
 
-      return res.json(user);
+      // return res.json(user);
+      if (user) {
+        // res.status(200).send(`User found in DB`);
+        res.json(user.id);
+      } else {
+        res.json(null);
+      }
     } catch (err) {
       console.log(err.message);
       return res.status(400).json({ error: true, msg: err.message });
