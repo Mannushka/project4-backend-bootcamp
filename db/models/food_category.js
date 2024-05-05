@@ -9,12 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.restaurant, {
+        foreignKey: "food_category_id",
+      });
     }
   }
   Food_category.init(
     {
-      category_name: DataTypes.STRING,
-      allowNull: false,
+      category_name: { type: DataTypes.STRING, allowNull: false },
     },
     {
       sequelize,
