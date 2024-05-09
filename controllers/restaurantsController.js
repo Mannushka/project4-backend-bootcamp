@@ -6,12 +6,30 @@ class RestaurantsController extends BaseController {
     this.locationModel = locationModel;
     this.food_categoryModel = food_categoryModel;
   }
-
+  async getAll(req, res) {
+    try {
+      const output = await this.model.findAll({
+        include: [
+          {
+            model: this.locationModel,
+            attributes: ["location_name"],
+          },
+          {
+            model: this.food_categoryModel,
+            attributes: ["category_name"],
+          },
+        ],
+      });
+      return res.json(output);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
   async getOne(req, res) {
     const { restaurantId } = req.params;
 
     try {
-      if (!isNaN(restaurantId)) {
+      if (restaurantId) {
         const restaurant = await this.model.findByPk(restaurantId, {
           include: [
             {
