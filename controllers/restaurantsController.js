@@ -25,21 +25,52 @@ class RestaurantsController extends BaseController {
       const { location, category, priceCategory } = req.query;
 
       const filters = {};
-
-      if (location && typeof location === "string") {
+      if (location && Array.isArray(location)) {
+        console.log(location);
+        filters["$location.location_name$"] = {
+          [Op.or]: location.map((location) => ({
+            [Op.iLike]: `%${location}%`,
+          })),
+        };
+      } else if (location && typeof location === "string") {
         filters["$location.location_name$"] = {
           [Op.iLike]: `%${location}%`,
         };
       }
 
-      if (category && typeof category === "string") {
+      // if (category && typeof category === "string") {
+      //   filters["$food_category.category_name$"] = {
+      //     [Op.iLike]: `%${category}%`,
+      //   };
+      // }
+
+      if (category && Array.isArray(category)) {
+        console.log(category);
+        filters["$food_category.category_name$"] = {
+          [Op.or]: category.map((category) => ({
+            [Op.iLike]: `%${category}%`,
+          })),
+        };
+      } else if (category && typeof category === "string") {
         filters["$food_category.category_name$"] = {
           [Op.iLike]: `%${category}%`,
         };
       }
 
+      console.log(filters);
+
+      // if (priceCategory) {
+      //   filters.price_category = Number(priceCategory);
+      // }
+
       if (priceCategory) {
-        filters.price_category = Number(priceCategory);
+        if (Array.isArray(priceCategory)) {
+          filters.price_category = {
+            [Op.in]: priceCategory.map(Number),
+          };
+        } else {
+          filters.price_category = Number(priceCategory);
+        }
       }
 
       if (Object.keys(filters).length > 0) {
