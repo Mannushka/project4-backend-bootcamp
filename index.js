@@ -8,9 +8,11 @@ app.use(express.json());
 //import controllers
 const UsersController = require("./controllers/usersController");
 const RestaurantsController = require("./controllers/restaurantsController");
+const FoodCategoriesController = require("./controllers/foodCategoriesController");
 //import routers
 const UsersRouter = require("./routers/usersRouter");
 const RestaurantsRouter = require("./routers/restaurantsRouter");
+const FoodCategoriesRouter = require("./routers/foodCategoriesRouter");
 
 //import DB
 const db = require("./db/models/index");
@@ -22,15 +24,21 @@ const restaurantsController = new RestaurantsController(
   location,
   food_category
 );
+const foodCategoriesController = new FoodCategoriesController(food_category);
+
 //initialize routers
 const usersRouter = new UsersRouter(usersController).routes();
 const restaurantsRouter = new RestaurantsRouter(restaurantsController).routes();
+const foodCategoriesRouter = new FoodCategoriesRouter(
+  foodCategoriesController
+).routes();
 
 app.get("/", (req, res) => res.send("Hello world"));
 
 // enable and use router
 app.use("/users", usersRouter);
 app.use("/restaurants", restaurantsRouter);
+app.use("/categories", foodCategoriesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

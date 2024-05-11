@@ -66,7 +66,7 @@ class RestaurantsController extends BaseController {
       if (priceCategory) {
         if (Array.isArray(priceCategory)) {
           filters.price_category = {
-            [Op.in]: priceCategory.map(Number),
+            [Op.inf]: priceCategory.map(Number),
           };
         } else {
           filters.price_category = Number(priceCategory);
