@@ -38,12 +38,6 @@ class RestaurantsController extends BaseController {
         };
       }
 
-      // if (category && typeof category === "string") {
-      //   filters["$food_category.category_name$"] = {
-      //     [Op.iLike]: `%${category}%`,
-      //   };
-      // }
-
       if (category && Array.isArray(category)) {
         console.log(category);
         filters["$food_category.category_name$"] = {
@@ -56,12 +50,6 @@ class RestaurantsController extends BaseController {
           [Op.iLike]: `%${category}%`,
         };
       }
-
-      console.log(filters);
-
-      // if (priceCategory) {
-      //   filters.price_category = Number(priceCategory);
-      // }
 
       if (priceCategory) {
         if (Array.isArray(priceCategory)) {
