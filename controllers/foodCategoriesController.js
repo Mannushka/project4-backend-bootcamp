@@ -4,7 +4,16 @@ class FoodCategoriesController extends BaseController {
   constructor(model) {
     super(model);
   }
-
+  // async getAll(req, res) {
+  //   try {
+  //     const categories = await this.model.findAll({
+  //       attributes: ["category_name"],
+  //     });
+  //     return res.json(categories);
+  //   } catch (err) {
+  //     return res.status(400).json({ error: true, msg: err });
+  //   }
+  // }
   async getOne(req, res) {
     const { categoryId } = req.params;
 
@@ -12,7 +21,7 @@ class FoodCategoriesController extends BaseController {
       if (categoryId && !isNaN(categoryId)) {
         const category = await this.model.findByPk(categoryId);
 
-        return res.json(category);
+        return res.json(category.category_name);
       }
     } catch (err) {
       return res.status(400).json({ error: true, msg: err.message });
@@ -21,5 +30,3 @@ class FoodCategoriesController extends BaseController {
 }
 
 module.exports = FoodCategoriesController;
-
-// && !isNaN(categoryId)
