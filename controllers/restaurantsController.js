@@ -53,10 +53,18 @@ class RestaurantsController extends BaseController {
 
       if (priceCategory) {
         if (Array.isArray(priceCategory)) {
-          filters.price_category = {
-            [Op.inf]: priceCategory.map(Number),
-          };
-        } else {
+          const isPriceCategoryValid = priceCategory.every((category) =>
+            [1, 2, 3].includes(Number(category))
+          );
+          if (isPriceCategoryValid) {
+            filters.price_category = {
+              [Op.in]: priceCategory.map(Number),
+            };
+          }
+        } else if (
+          !isNaN(Number(priceCategory)) &&
+          [1, 2, 3].includes(Number(priceCategory))
+        ) {
           filters.price_category = Number(priceCategory);
         }
       }
