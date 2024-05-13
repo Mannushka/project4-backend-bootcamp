@@ -10,15 +10,17 @@ const UsersController = require("./controllers/usersController");
 const RestaurantsController = require("./controllers/restaurantsController");
 const FoodCategoriesController = require("./controllers/foodCategoriesController");
 const LocationsController = require("./controllers/locationsController");
+const ReviewsControllers = require("./controllers/reviewsController");
 //import routers
 const UsersRouter = require("./routers/usersRouter");
 const RestaurantsRouter = require("./routers/restaurantsRouter");
 const FoodCategoriesRouter = require("./routers/foodCategoriesRouter");
 const LocationsRouter = require("./routers/locationsRouter");
+const ReviewsRouter = require("./routers/reviewsRouter");
 
 //import DB
 const db = require("./db/models/index");
-const { user, restaurant, location, food_category } = db;
+const { user, restaurant, location, food_category, review } = db;
 //initialize controllers
 const usersController = new UsersController(user);
 const restaurantsController = new RestaurantsController(
@@ -28,6 +30,7 @@ const restaurantsController = new RestaurantsController(
 );
 const foodCategoriesController = new FoodCategoriesController(food_category);
 const locationsController = new LocationsController(location);
+const reviewsController = new ReviewsControllers(review, user, restaurant);
 
 //initialize routers
 const usersRouter = new UsersRouter(usersController).routes();
@@ -36,6 +39,7 @@ const foodCategoriesRouter = new FoodCategoriesRouter(
   foodCategoriesController
 ).routes();
 const locationsRouter = new LocationsRouter(locationsController).routes();
+const reviewsRouter = new ReviewsRouter(reviewsController).routes();
 
 app.get("/", (req, res) => res.send("Hello world"));
 
@@ -44,6 +48,7 @@ app.use("/users", usersRouter);
 app.use("/restaurants", restaurantsRouter);
 app.use("/categories", foodCategoriesRouter);
 app.use("/locations", locationsRouter);
+app.use("/reviews", reviewsRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
