@@ -36,6 +36,12 @@ class ReviewsController extends BaseController {
 
       const reviews = await this.model.findAll({
         where: { restaurant_id: restaurant_id },
+        include: [
+          {
+            model: this.userModel,
+            attributes: ["first_name"],
+          },
+        ],
       });
 
       return res.json(reviews);
