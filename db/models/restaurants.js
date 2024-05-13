@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.location, {
         foreignKey: "location_id",
       });
+      this.hasMany(models.review, {
+        foreignKey: "restaurant_id",
+      });
     }
   }
   Restaurant.init(
