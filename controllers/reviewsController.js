@@ -6,10 +6,25 @@ class ReviewsController extends BaseController {
     this.userModel = userModel;
     this.restaurantModel = restaurantModel;
   }
+  async getAll(req, res) {
+    const { restaurant_id } = req.query;
+    try {
+      if (!restaurant_id) {
+        return res
+          .status(400)
+          .json({ error: true, msg: "Restaurant ID is required." });
+      }
+
+      const reviews = await this.model.findAll({
+        where: { restaurant_id: restaurant_id },
+      });
+      return res.json(reviews);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
 
   async postOne(req, res) {
-    console.log(this.userModel);
-    console.log(this.restaurantModel);
     const { email, restaurant_id, rating_value, text } = req.body;
     try {
       if (email && restaurant_id && rating_value && text) {
