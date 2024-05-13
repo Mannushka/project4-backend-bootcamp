@@ -62,7 +62,7 @@ class RestaurantsController extends BaseController {
             };
           }
         } else if (
-          !isNaN(Number(priceCategory)) &&
+          !isNaN(priceCategory) &&
           [1, 2, 3].includes(Number(priceCategory))
         ) {
           filters.price_category = Number(priceCategory);
