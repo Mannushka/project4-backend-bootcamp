@@ -6,7 +6,7 @@ class ReviewsController extends BaseController {
     this.userModel = userModel;
     this.restaurantModel = restaurantModel;
   }
-  async getAll(req, res) {
+  async getAllReviewsForRestaurant(req, res) {
     const { restaurant_id } = req.query;
     try {
       if (!restaurant_id) {
@@ -22,6 +22,46 @@ class ReviewsController extends BaseController {
 
       const reviews = await this.model.findAll({
         where: { restaurant_id: restaurant_id },
+      });
+      return res.json(reviews);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
+
+  async getAllReviewsByUser(req, res) {
+    const { email } = req.query;
+    try {
+      if (!email) {
+        return res
+          .status(400)
+          .json({ error: true, msg: "User email is required." });
+      }
+      const emailRegex = /^\S+@\S+\.\S+$/;
+      if (!emailRegex.test(email)) {
+        return res
+          .status(400)
+          .json({ error: true, msg: "Invalid email format." });
+      }
+      const user = await this.userModel.findOrCreate({
+        where: { email: email },
+      });
+
+      const user_id = user[0].dataValues.id;
+      if (!user_id) {
+        return res
+          .status(400)
+          .json({ error: true, msg: "User ID is required." });
+      }
+
+      if (isNaN(user_id)) {
+        return res
+          .status(400)
+          .json({ error: true, msg: "User ID must be a number." });
+      }
+
+      const reviews = await this.model.findAll({
+        where: { user_id: user_id },
       });
       return res.json(reviews);
     } catch (err) {
