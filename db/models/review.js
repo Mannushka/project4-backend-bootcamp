@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.restaurant, {
         foreignKey: "restaurant_id",
       });
+      this.hasMany(models.review_photo, {
+        foreignKey: "review_id",
+      });
+      this.hasOne(models.review_photo, {
+        foreignKey: "review_id",
+      });
     }
   }
   Review.init(
