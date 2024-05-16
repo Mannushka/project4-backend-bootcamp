@@ -82,70 +82,70 @@ class ReviewsController extends BaseController {
     }
   }
 
-  async postOne(req, res) {
-    const { email, restaurant_id, rating_value, text, photoURLs } = req.body;
-    try {
-      if (!email || !restaurant_id || !rating_value || !text) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Some values are missing." });
-      }
+  // async postOne(req, res) {
+  //   const { email, restaurant_id, rating_value, text, photoURLs } = req.body;
+  //   try {
+  //     if (!email || !restaurant_id || !rating_value || !text) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: true, msg: "Some values are missing." });
+  //     }
 
-      if (!this.validateEmail(email)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Invalid email format." });
-      }
+  //     if (!this.validateEmail(email)) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: true, msg: "Invalid email format." });
+  //     }
 
-      if (!this.validateNumber(rating_value)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Rating value must be a number." });
-      }
+  //     if (!this.validateNumber(rating_value)) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: true, msg: "Rating value must be a number." });
+  //     }
 
-      if (!this.validateNumber(restaurant_id)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Restaurant ID must be a number." });
-      }
+  //     if (!this.validateNumber(restaurant_id)) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: true, msg: "Restaurant ID must be a number." });
+  //     }
 
-      if (text.length < 80) {
-        return res.status(400).json({
-          error: true,
-          msg: "Review must be at least 80 characters long.",
-        });
-      }
+  //     if (text.length < 80) {
+  //       return res.status(400).json({
+  //         error: true,
+  //         msg: "Review must be at least 80 characters long.",
+  //       });
+  //     }
 
-      const user_id = await this.getUserIdByEmail(this.userModel, email);
+  //     const user_id = await this.getUserIdByEmail(this.userModel, email);
 
-      if (!user_id || !this.validateNumber(user_id)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Invalid or missing user ID." });
-      }
+  //     if (!user_id || !this.validateNumber(user_id)) {
+  //       return res
+  //         .status(400)
+  //         .json({ error: true, msg: "Invalid or missing user ID." });
+  //     }
 
-      const review = await this.model.create({
-        user_id,
-        restaurant_id,
-        rating_value,
-        text,
-      });
+  //     const review = await this.model.create({
+  //       user_id,
+  //       restaurant_id,
+  //       rating_value,
+  //       text,
+  //     });
 
-      if (Array.isArray(photoURLs) && photoURLs.length > 0) {
-        const review_id = review.id;
-        const reviewPhotos = photoURLs.slice(0, 5).map((photoURL, index) => ({
-          review_id,
-          [`photo_${index + 1}`]: photoURL,
-        }));
-        await this.review_photoModel.bulkCreate(reviewPhotos);
-      }
+  //     if (Array.isArray(photoURLs) && photoURLs.length > 0) {
+  //       const review_id = review.id;
+  //       const reviewPhotos = photoURLs.slice(0, 5).map((photoURL, index) => ({
+  //         review_id,
+  //         [`photo_${index + 1}`]: photoURL,
+  //       }));
+  //       await this.review_photoModel.bulkCreate(reviewPhotos);
+  //     }
 
-      return res.json(review);
-    } catch (err) {
-      console.log(err.message);
-      return res.status(400).json({ error: true, msg: err.message });
-    }
-  }
+  //     return res.json(review);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     return res.status(400).json({ error: true, msg: err.message });
+  //   }
+  // }
 
   // async getAllReviewsForRestaurant(req, res) {
   //   const { restaurant_id } = req.query;
@@ -169,6 +169,79 @@ class ReviewsController extends BaseController {
   //     return res.status(400).json({ error: true, msg: err });
   //   }
   // }
+  async postOne(req, res) {
+    const { email, restaurant_id, rating_value, text, photoURLs } = req.body;
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        if (!email || !restaurant_id || !rating_value || !text) {
+          return res
+            .status(400)
+            .json({ error: true, msg: "Some values are missing." });
+        }
+
+        if (!this.validateEmail(email)) {
+          return res
+            .status(400)
+            .json({ error: true, msg: "Invalid email format." });
+        }
+
+        if (!this.validateNumber(rating_value)) {
+          return res
+            .status(400)
+            .json({ error: true, msg: "Rating value must be a number." });
+        }
+
+        if (!this.validateNumber(restaurant_id)) {
+          return res
+            .status(400)
+            .json({ error: true, msg: "Restaurant ID must be a number." });
+        }
+
+        if (text.length < 80) {
+          return res.status(400).json({
+            error: true,
+            msg: "Review must be at least 80 characters long.",
+          });
+        }
+
+        const user_id = await this.getUserIdByEmail(this.userModel, email);
+
+        if (!user_id || !this.validateNumber(user_id)) {
+          return res
+            .status(400)
+            .json({ error: true, msg: "Invalid or missing user ID." });
+        }
+
+        const review = await this.model.create(
+          {
+            user_id,
+            restaurant_id,
+            rating_value,
+            text,
+          },
+          { transaction: t }
+        );
+
+        if (Array.isArray(photoURLs) && photoURLs.length > 0) {
+          const review_id = review.id;
+          const reviewPhotos = photoURLs.slice(0, 5).map((photoURL, index) => ({
+            review_id,
+            [`photo_${index + 1}`]: photoURL,
+          }));
+          await this.review_photoModel.bulkCreate(reviewPhotos, {
+            transaction: t,
+          });
+        }
+
+        return review;
+      });
+
+      return res.json(result);
+    } catch (err) {
+      console.log(err.message);
+      return res.status(400).json({ error: true, msg: err.message });
+    }
+  }
 
   // async getAllReviewsByUser(req, res) {
   //   const { email } = req.query;
