@@ -1,14 +1,15 @@
 const BaseController = require("./baseController");
 
 class ReviewsController extends BaseController {
-  constructor(model, userModel, restaurantModel) {
+  constructor(model, userModel, restaurantModel, review_photoModel) {
     super(model);
     this.userModel = userModel;
     this.restaurantModel = restaurantModel;
+    this.review_photoModel = review_photoModel;
   }
   async getUserIdByEmail(userModel, email) {
     try {
-      const user = await userModel.findOrCreate({ where: { email: email } });
+      const user = await userModel.find({ where: { email: email } });
       const user_id = user[0].dataValues.id;
       return user_id;
     } catch (err) {
@@ -82,7 +83,7 @@ class ReviewsController extends BaseController {
   }
 
   async postOne(req, res) {
-    const { email, restaurant_id, rating_value, text } = req.body;
+    const { email, restaurant_id, rating_value, text, photoURLs } = req.body;
     try {
       if (!email || !restaurant_id || !rating_value || !text) {
         return res
@@ -129,6 +130,15 @@ class ReviewsController extends BaseController {
         rating_value,
         text,
       });
+
+      if (Array.isArray(photoURLs) && photoURLs.length > 0) {
+        const review_id = review.id;
+        const reviewPhotos = photoURLs.slice(0, 5).map((photoURL, index) => ({
+          review_id,
+          [`photo_${index + 1}`]: photoURL,
+        }));
+        await this.review_photoModel.bulkCreate(reviewPhotos);
+      }
 
       return res.json(review);
     } catch (err) {
