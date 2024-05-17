@@ -2,9 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const { Sequelize } = require("sequelize");
+const config = require("./config/database.js");
+const sequelize = new Sequelize(config.development);
+module.exports = { sequelize };
+
 const port = 3000;
 app.use(cors());
 app.use(express.json());
+
 //import controllers
 const UsersController = require("./controllers/usersController");
 const RestaurantsController = require("./controllers/restaurantsController");
