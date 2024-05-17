@@ -18,20 +18,8 @@ module.exports = {
           key: "id",
         },
       },
-      photo_1: {
+      photo: {
         allowNull: false,
-        type: Sequelize.STRING,
-      },
-      photo_2: {
-        type: Sequelize.STRING,
-      },
-      photo_3: {
-        type: Sequelize.STRING,
-      },
-      photo_4: {
-        type: Sequelize.STRING,
-      },
-      photo_5: {
         type: Sequelize.STRING,
       },
 

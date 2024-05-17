@@ -24,11 +24,7 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      photo_1: { allowNull: false, type: DataTypes.STRING },
-      photo_2: DataTypes.STRING,
-      photo_3: DataTypes.STRING,
-      photo_4: DataTypes.STRING,
-      photo_5: DataTypes.STRING,
+      photo: { allowNull: false, type: DataTypes.STRING },
     },
     {
       sequelize,

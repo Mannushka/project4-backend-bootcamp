@@ -18,9 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.review_photo, {
         foreignKey: "review_id",
       });
-      this.hasOne(models.review_photo, {
-        foreignKey: "review_id",
-      });
     }
   }
   Review.init(
