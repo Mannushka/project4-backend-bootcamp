@@ -43,6 +43,10 @@ class ReviewsController extends BaseController {
             model: this.userModel,
             attributes: ["first_name"],
           },
+          {
+            model: this.review_photoModel,
+            attributes: ["id", "photo"],
+          },
         ],
       });
 
@@ -75,6 +79,12 @@ class ReviewsController extends BaseController {
 
       const reviews = await this.model.findAll({
         where: { user_id: user_id },
+        include: [
+          {
+            model: this.review_photoModel,
+            attributes: ["id", "photo"],
+          },
+        ],
       });
 
       return res.json(reviews);
