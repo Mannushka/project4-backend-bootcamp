@@ -35,7 +35,8 @@ const usersController = new UsersController(user);
 const restaurantsController = new RestaurantsController(
   restaurant,
   location,
-  food_category
+  food_category,
+  review
 );
 const foodCategoriesController = new FoodCategoriesController(food_category);
 const locationsController = new LocationsController(location);

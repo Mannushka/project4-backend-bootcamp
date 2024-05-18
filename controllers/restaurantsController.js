@@ -2,10 +2,11 @@ const BaseController = require("./baseController");
 const { Op } = require("sequelize");
 
 class RestaurantsController extends BaseController {
-  constructor(model, locationModel, food_categoryModel) {
+  constructor(model, locationModel, food_categoryModel, reviewModel) {
     super(model);
     this.locationModel = locationModel;
     this.food_categoryModel = food_categoryModel;
+    this.reviewModel = reviewModel;
   }
   async getAll(req, res) {
     try {
@@ -18,6 +19,10 @@ class RestaurantsController extends BaseController {
           {
             model: this.food_categoryModel,
             attributes: ["category_name"],
+          },
+          {
+            model: this.reviewModel,
+            attributes: ["rating_value"],
           },
         ],
       });
@@ -80,6 +85,10 @@ class RestaurantsController extends BaseController {
               model: this.food_categoryModel,
               attributes: ["category_name"],
             },
+            {
+              model: this.reviewModel,
+              attributes: ["rating_value"],
+            },
           ],
           where: filters,
         });
@@ -105,6 +114,10 @@ class RestaurantsController extends BaseController {
             {
               model: this.food_categoryModel,
               attributes: ["category_name"],
+            },
+            {
+              model: this.reviewModel,
+              attributes: ["rating_value"],
             },
           ],
         });
