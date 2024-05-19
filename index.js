@@ -44,7 +44,8 @@ const usersController = new UsersController(
   restaurant,
   saved_restaurant,
   location,
-  food_category
+  food_category,
+  review
 );
 const restaurantsController = new RestaurantsController(
   restaurant,
