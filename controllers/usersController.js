@@ -6,13 +6,15 @@ class UsersController extends BaseController {
     restaurantModel,
     saved_restaurantModel,
     locationModel,
-    food_categoryModel
+    food_categoryModel,
+    reviewModel
   ) {
     super(model);
     this.restaurantModel = restaurantModel;
     this.saved_restaurantModel = saved_restaurantModel;
     this.locationModel = locationModel;
     this.food_categoryModel = food_categoryModel;
+    this.reviewModel = reviewModel;
   }
 
   async postUser(req, res) {
@@ -166,6 +168,10 @@ class UsersController extends BaseController {
                 model: this.food_categoryModel,
                 attributes: ["category_name"],
               },
+              {
+                model: this.reviewModel,
+                attributes: ["rating_value"],
+              },
             ],
           },
         ],
@@ -211,6 +217,39 @@ class UsersController extends BaseController {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async checkIfRestaurantSaved(req, res) {
+    const { userId } = req.params;
+    const { restaurantId } = req.query;
+    console.log(restaurantId);
+    if (!userId || isNaN(userId)) {
+      return res.status(400).json({ message: "User id is missing or invalid" });
+    }
+    if (!restaurantId || isNaN(restaurantId)) {
+      return res
+        .status(400)
+        .json({ message: "Restaurant id is missing or invalid" });
+    }
+    try {
+      const user = await this.model.findByPk(userId);
+      const restaurant = await this.restaurantModel.findByPk(restaurantId);
+
+      if (!user || !restaurant) {
+        return res
+          .status(400)
+          .json({ message: "User or restaurant not found" });
+      }
+      const existingSavedRestaurant = await this.saved_restaurantModel.findOne({
+        where: { user_id: userId, restaurant_id: restaurantId },
+      });
+      const isRestaurantSaved = !!existingSavedRestaurant;
+
+      return res.status(200).json({ isRestaurantSaved });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }
