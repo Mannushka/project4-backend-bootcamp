@@ -17,6 +17,10 @@ class ReviewsController {
       this.controller.getAllReviewsByUser.bind(this.controller)
     );
     router.post("/", this.controller.postOne.bind(this.controller));
+    router.delete(
+      "/:reviewId",
+      this.controller.deleteReview.bind(this.controller)
+    );
     return router;
   }
 }
