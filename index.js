@@ -29,9 +29,23 @@ const ReviewPhotosRouter = require("./routers/reviewPhotosRouter");
 //import DB
 const db = require("./db/models/index");
 
-const { user, restaurant, location, food_category, review, review_photo } = db;
+const {
+  user,
+  restaurant,
+  location,
+  food_category,
+  review,
+  review_photo,
+  saved_restaurant,
+} = db;
 //initialize controllers
-const usersController = new UsersController(user);
+const usersController = new UsersController(
+  user,
+  restaurant,
+  saved_restaurant,
+  location,
+  food_category
+);
 const restaurantsController = new RestaurantsController(
   restaurant,
   location,

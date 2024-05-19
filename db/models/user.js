@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.review, {
         foreignKey: "user_id",
       });
-      this.belongsToMany(models.restaurant, { through: "saved_restaurants" });
+      this.belongsToMany(models.restaurant, {
+        through: "saved_restaurants",
+        foreignKey: "user_id",
+      });
     }
   }
   User.init(
