@@ -25,6 +25,11 @@ class UsersRouter {
       "/:userId/my-restaurants",
       this.controller.deleteSavedRestaurant.bind(this.controller)
     );
+
+    router.get(
+      "/:userId/check-saved-restaurant",
+      this.controller.checkIfRestaurantSaved.bind(this.controller)
+    );
     return router;
   }
 }
