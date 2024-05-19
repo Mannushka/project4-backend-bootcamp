@@ -109,7 +109,15 @@ class UsersController extends BaseController {
           .status(400)
           .json({ message: "User or restaurant not found" });
       }
+      const existingSavedRestaurant = await this.saved_restaurantModel.findOne({
+        where: { user_id: userId, restaurant_id: restaurantId },
+      });
 
+      if (existingSavedRestaurant) {
+        return res
+          .status(400)
+          .json({ message: "Restaurant has already been previosly saved" });
+      }
       const savedRestaurant = await this.saved_restaurantModel.create({
         user_id: userId,
         restaurant_id: restaurantId,
