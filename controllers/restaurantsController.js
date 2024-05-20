@@ -190,21 +190,22 @@ class RestaurantsController extends BaseController {
       }
 
       const totalCount = await this.model.count({
-        // include: [
-        //   {
-        //     model: this.locationModel,
-        //     attributes: ["location_name"],
-        //   },
-        //   {
-        //     model: this.food_categoryModel,
-        //     attributes: ["category_name"],
-        //   },
-        //   {
-        //     model: this.reviewModel,
-        //     attributes: ["rating_value"],
-        //   },
-        // ],
+        include: [
+          {
+            model: this.locationModel,
+            attributes: ["location_name"],
+          },
+          {
+            model: this.food_categoryModel,
+            attributes: ["category_name"],
+          },
+          {
+            model: this.reviewModel,
+            attributes: ["rating_value"],
+          },
+        ],
         where: filters,
+        distinct: true,
       });
 
       // return res.json(restaurants);
