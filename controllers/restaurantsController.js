@@ -103,7 +103,7 @@ class RestaurantsController extends BaseController {
   async getAll(req, res) {
     const {
       page = 1,
-      pageSize = 5,
+      pageSize = 8,
       location = null,
       category = null,
       priceCategory = null,
