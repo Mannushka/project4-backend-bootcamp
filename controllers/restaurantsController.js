@@ -101,32 +101,18 @@ class RestaurantsController extends BaseController {
   // }
 
   async getAll(req, res) {
-    const { page = 1, pageSize = 5 } = req.query;
+    const {
+      page = 1,
+      pageSize = 5,
+      location = null,
+      category = null,
+      priceCategory = null,
+    } = req.query;
     try {
-      let restaurants = await this.model.findAll({
-        include: [
-          {
-            model: this.locationModel,
-            attributes: ["location_name"],
-          },
-          {
-            model: this.food_categoryModel,
-            attributes: ["category_name"],
-          },
-          {
-            model: this.reviewModel,
-            attributes: ["rating_value"],
-          },
-        ],
-        limit: pageSize,
-        offset: (page - 1) * pageSize,
-      });
-
-      const { location, category, priceCategory } = req.query;
-
       const filters = {};
+
+      console.log(filters);
       if (location && Array.isArray(location)) {
-        console.log(location);
         filters["$location.location_name$"] = {
           [Op.or]: location.map((location) => ({
             [Op.iLike]: `%${location}%`,
@@ -139,7 +125,6 @@ class RestaurantsController extends BaseController {
       }
 
       if (category && Array.isArray(category)) {
-        console.log(category);
         filters["$food_category.category_name$"] = {
           [Op.or]: category.map((category) => ({
             [Op.iLike]: `%${category}%`,
@@ -169,50 +154,43 @@ class RestaurantsController extends BaseController {
         }
       }
 
-      if (Object.keys(filters).length > 0) {
-        restaurants = await this.model.findAll({
-          include: [
-            {
-              model: this.locationModel,
-              attributes: ["location_name"],
-            },
-            {
-              model: this.food_categoryModel,
-              attributes: ["category_name"],
-            },
-            {
-              model: this.reviewModel,
-              attributes: ["rating_value"],
-            },
-          ],
-          where: filters,
-        });
-      }
+      const modelsToInclude = [
+        {
+          model: this.reviewModel,
+          attributes: ["rating_value"],
+        },
+        {
+          model: this.locationModel,
+          attributes: ["location_name"],
+          where: filters["$location.location_name$"]
+            ? { location_name: filters["$location.location_name$"] }
+            : {},
+        },
+        {
+          model: this.food_categoryModel,
+          attributes: ["category_name"],
+          where: filters["$food_category.category_name$"]
+            ? { category_name: filters["$food_category.category_name$"] }
+            : {},
+        },
+      ];
 
-      const totalCount = await this.model.count({
-        include: [
-          {
-            model: this.locationModel,
-            attributes: ["location_name"],
-          },
-          {
-            model: this.food_categoryModel,
-            attributes: ["category_name"],
-          },
-          {
-            model: this.reviewModel,
-            attributes: ["rating_value"],
-          },
-        ],
-        where: filters,
+      const priceFilter = filters.price_category
+        ? { price_category: filters.price_category }
+        : {};
+
+      const { count, rows: restaurants } = await this.model.findAndCountAll({
+        include: modelsToInclude,
+        where: priceFilter,
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
         distinct: true,
       });
 
-      // return res.json(restaurants);
       return res.json({
         restaurants,
-        totalCount,
-        totalPages: Math.ceil(totalCount / pageSize),
+        totalCount: count,
+        totalPages: Math.ceil(count / pageSize),
         currentPage: Number(page),
       });
     } catch (err) {
@@ -250,3 +228,57 @@ class RestaurantsController extends BaseController {
   }
 }
 module.exports = RestaurantsController;
+
+//  if (Object.keys(filters).length > 0) {
+//         console.log(filters);
+//         restaurants = await this.model.findAll({
+//           include: [
+//             {
+//               model: this.locationModel,
+//               attributes: ["id", "location_name"],
+//             },
+//             {
+//               model: this.food_categoryModel,
+//               attributes: ["id", "category_name"],
+//             },
+//             {
+//               model: this.reviewModel,
+//               attributes: ["id", "rating_value"],
+//             },
+//           ],
+//           where: filters,
+//           limit: pageSize,
+//           offset: (page - 1) * pageSize,
+//         });
+//       }
+
+//       const totalCount = await this.model.count({
+//         include: [
+//           {
+//             model: this.locationModel,
+//             attributes: ["location_name"],
+//           },
+//           {
+//             model: this.food_categoryModel,
+//             attributes: ["category_name"],
+//           },
+//           {
+//             model: this.reviewModel,
+//             attributes: ["rating_value"],
+//           },
+//         ],
+//         where: filters,
+//         distinct: true,
+//       });
+
+//       // return res.json(restaurants);
+//       return res.json({
+//         restaurants,
+//         totalCount,
+//         totalPages: Math.ceil(totalCount / pageSize),
+//         currentPage: Number(page),
+//       });
+//     } catch (err) {
+//       return res.status(400).json({ error: true, msg: err.message });
+//     }
+//   }
