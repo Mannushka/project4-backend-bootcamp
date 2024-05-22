@@ -107,6 +107,7 @@ class RestaurantsController extends BaseController {
       location = null,
       category = null,
       priceCategory = null,
+      name = null,
     } = req.query;
     try {
       const filters = {};
@@ -179,9 +180,11 @@ class RestaurantsController extends BaseController {
         ? { price_category: filters.price_category }
         : {};
 
+      const nameFilter = name ? { name: { [Op.iLike]: `%${name}%` } } : {};
+
       const { count, rows: restaurants } = await this.model.findAndCountAll({
         include: modelsToInclude,
-        where: priceFilter,
+        where: { ...priceFilter, ...nameFilter },
         limit: pageSize,
         offset: (page - 1) * pageSize,
         distinct: true,
