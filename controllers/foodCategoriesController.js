@@ -4,16 +4,16 @@ class FoodCategoriesController extends BaseController {
   constructor(model) {
     super(model);
   }
-  // async getAll(req, res) {
-  //   try {
-  //     const categories = await this.model.findAll({
-  //       attributes: ["category_name"],
-  //     });
-  //     return res.json(categories);
-  //   } catch (err) {
-  //     return res.status(400).json({ error: true, msg: err });
-  //   }
-  // }
+  async getAll(req, res) {
+    try {
+      const categories = await this.model.findAll({
+        order: [["category_name", "ASC"]],
+      });
+      return res.json(categories);
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
   async getOne(req, res) {
     const { categoryId } = req.params;
 

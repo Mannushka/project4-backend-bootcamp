@@ -60,6 +60,7 @@ class ReviewsController extends BaseController {
             attributes: ["id", "photo"],
           },
         ],
+        order: [["created_at", "DESC"]],
       });
 
       return res.json(reviews);
@@ -111,6 +112,7 @@ class ReviewsController extends BaseController {
             attributes: ["id", "photo"],
           },
         ],
+        order: [["created_at", "DESC"]],
       });
 
       return res.json(reviews);
