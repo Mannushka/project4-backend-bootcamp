@@ -188,19 +188,19 @@ class RestaurantsController extends BaseController {
 
       const order = [];
 
-      if (sortBy === "highestRating") {
+      if (sortBy === "highest_rating") {
         order.push([
           Sequelize.literal(
             '(SELECT CASE WHEN COUNT("rating_value") > 0 THEN AVG("rating_value") ELSE 0 END FROM reviews WHERE reviews.restaurant_id = Restaurant.id) DESC'
           ),
         ]);
-      } else if (sortBy === "mostReviews") {
+      } else if (sortBy === "most_reviews") {
         order.push([
           Sequelize.literal(
             "(SELECT COUNT(id) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) DESC"
           ),
         ]);
-      } else if (sortBy === "mostRecentReview") {
+      } else if (sortBy === "most_recent_review") {
         order.push([
           Sequelize.literal(
             "(CASE WHEN (SELECT COUNT(*) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) > 0 THEN (SELECT MAX(created_at) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) END) DESC NULLS LAST"
