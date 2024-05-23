@@ -53,12 +53,18 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
-    await queryInterface.bulkDelete("food_categories", null, {});
+    // await queryInterface.bulkDelete("food_categories", null, {});
+    await queryInterface.bulkDelete("food_categories", {
+      category_name: {
+        [Sequelize.Op.in]: [
+          "Chinese",
+          "Vietnamese",
+          "Japanese",
+          "Korean",
+          "American",
+          "Italian",
+        ],
+      },
+    });
   },
 };
