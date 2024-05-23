@@ -1,5 +1,5 @@
 const BaseController = require("./baseController");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 
 class RestaurantsController extends BaseController {
   constructor(model, locationModel, food_categoryModel, reviewModel) {
@@ -108,8 +108,10 @@ class RestaurantsController extends BaseController {
       category = null,
       priceCategory = null,
       name = null,
+      sortBy = "highestRating",
     } = req.query;
     try {
+      //filtering
       const filters = {};
 
       console.log(filters);
@@ -182,12 +184,39 @@ class RestaurantsController extends BaseController {
 
       const nameFilter = name ? { name: { [Op.iLike]: `%${name}%` } } : {};
 
+      //sorting
+
+      const order = [];
+
+      if (sortBy === "highestRating") {
+        order.push([
+          Sequelize.literal(
+            '(SELECT CASE WHEN COUNT("rating_value") > 0 THEN AVG("rating_value") ELSE 0 END FROM reviews WHERE reviews.restaurant_id = Restaurant.id) DESC'
+          ),
+        ]);
+      } else if (sortBy === "mostReviews") {
+        order.push([
+          Sequelize.literal(
+            "(SELECT COUNT(id) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) DESC"
+          ),
+        ]);
+      } else if (sortBy === "mostRecentReview") {
+        order.push([
+          Sequelize.literal(
+            "(CASE WHEN (SELECT COUNT(*) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) > 0 THEN (SELECT MAX(created_at) FROM reviews WHERE reviews.restaurant_id = Restaurant.id) END) DESC NULLS LAST"
+          ),
+        ]);
+      }
+
+      console.log(order);
+
       const { count, rows: restaurants } = await this.model.findAndCountAll({
         include: modelsToInclude,
         where: { ...priceFilter, ...nameFilter },
         limit: pageSize,
         offset: (page - 1) * pageSize,
         distinct: true,
+        order,
       });
 
       return res.json({
