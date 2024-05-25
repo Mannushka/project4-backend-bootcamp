@@ -55,6 +55,10 @@ class ReviewsController extends BaseController {
             model: this.review_photoModel,
             attributes: ["id", "photo"],
           },
+          {
+            model: this.restaurantModel,
+            attributes: ["name"],
+          },
         ],
 
         limit: pageSize,
@@ -92,6 +96,10 @@ class ReviewsController extends BaseController {
           {
             model: this.review_photoModel,
             attributes: ["id", "photo"],
+          },
+          {
+            model: this.restaurantModel,
+            attributes: ["name"],
           },
         ],
         order: [["created_at", "DESC"]],
@@ -144,6 +152,10 @@ class ReviewsController extends BaseController {
           {
             model: this.review_photoModel,
             attributes: ["id", "photo"],
+          },
+          {
+            model: this.restaurantModel,
+            attributes: ["name"],
           },
         ],
         order: [["created_at", "DESC"]],
