@@ -41,7 +41,7 @@ class ReviewsController extends BaseController {
 
   async getAll(req, res) {
     try {
-      const { page = 1, pageSize = 10 } = req.query;
+      const { page = 1, pageSize = 9 } = req.query;
 
       const { count, rows: reviews } = await this.model.findAndCountAll({
         include: [
