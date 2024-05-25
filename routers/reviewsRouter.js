@@ -6,8 +6,9 @@ class ReviewsController {
     this.controller = controller;
   }
   routes() {
+    router.get("/", this.controller.getAll.bind(this.controller));
     router.get(
-      "/",
+      "/restaurant/:restaurantId",
       this.controller.getAllReviewsForRestaurant.bind(this.controller)
     );
 

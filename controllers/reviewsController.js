@@ -39,8 +39,42 @@ class ReviewsController extends BaseController {
     return !isNaN(id);
   }
 
+  async getAll(req, res) {
+    try {
+      // const output = await this.model.findAll();
+      // return res.json(output);
+      const { page = 1, pageSize = 10 } = req.query;
+
+      const { count, rows: reviews } = await this.model.findAndCountAll({
+        include: [
+          {
+            model: this.userModel,
+            attributes: ["first_name"],
+          },
+          {
+            model: this.review_photoModel,
+            attributes: ["id", "photo"],
+          },
+        ],
+
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+        distinct: true,
+        order: [["created_at", "DESC"]],
+      });
+
+      return res.json({
+        reviews,
+        totalCount: count,
+        totalPages: Math.ceil(count / pageSize),
+        currentPage: Number(page),
+      });
+    } catch (err) {
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
   async getAllReviewsForRestaurant(req, res) {
-    const { restaurantId } = req.query;
+    const { restaurantId } = req.params;
     try {
       if (!restaurantId || !this.validateNumber(restaurantId)) {
         return res
