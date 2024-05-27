@@ -108,7 +108,7 @@ class RestaurantsController extends BaseController {
       category = null,
       priceCategory = null,
       name = null,
-      sortBy = "highestRating",
+      sortBy = "highest_rating",
     } = req.query;
     try {
       //filtering
