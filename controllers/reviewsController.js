@@ -249,42 +249,70 @@ class ReviewsController extends BaseController {
     const { reviewId } = req.params;
 
     try {
-      if (!userId || !this.validateNumber(userId)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Invalid or missing user ID." });
-      }
+      const result = await sequelize.transaction(async (t) => {
+        if (!userId || !this.validateNumber(userId)) {
+          return {
+            error: true,
+            status: 400,
+            msg: "Invalid or missing user ID.",
+          };
+        }
 
-      if (!reviewId || !this.validateNumber(reviewId)) {
-        return res
-          .status(400)
-          .json({ error: true, msg: "Invalid or missing review ID." });
-      }
+        if (!reviewId || !this.validateNumber(reviewId)) {
+          return {
+            error: true,
+            status: 400,
+            msg: "Invalid or missing review ID.",
+          };
+        }
 
-      const review = await this.model.findOne({
-        where: { id: reviewId, user_id: userId },
+        const review = await this.model.findOne({
+          where: { id: reviewId, user_id: userId },
+        });
+        if (!review) {
+          return {
+            error: true,
+            status: 404,
+            msg: "Review not found for the user.",
+          };
+        }
+
+        const reviewPhotos = await this.review_photoModel.findAll({
+          where: { review_id: reviewId },
+        });
+
+        if (reviewPhotos.length) {
+          await Promise.all(
+            reviewPhotos.map(async (photo) => {
+              await photo.destroy({ transaction: t });
+            })
+          );
+        }
+
+        await review.destroy({ transaction: t });
+        const isReviewDeleted = await this.model.findOne({
+          where: { id: reviewId, user_id: userId },
+        });
+
+        if (!isReviewDeleted) {
+          return {
+            success: true,
+            msg: "Review deleted successfully.",
+          };
+        }
+
+        return {
+          success: true,
+          msg: "Review and associated photos deleted successfully.",
+        };
       });
 
-      if (!review) {
-        return res
-          .status(404)
-          .json({ error: true, msg: "Review not found for the user." });
-      }
-
-      await review.destroy();
-      const isReviewDeleted = await this.model.findOne({
-        where: { id: reviewId, user_id: userId },
-      });
-      console.log(isReviewDeleted);
-      if (!isReviewDeleted) {
-        return res.json({ success: true, msg: "Review deleted successfully." });
-      }
+      res.status(result.status || 200).json(result);
     } catch (err) {
       console.error(err);
-      return res.status(400).json({ error: true, msg: err.message });
+      res.status(400).json({ error: true, msg: err.message });
     }
   }
-
   // async getAllReviewsByUser(req, res) {
   //   const { email } = req.query;
   //   try {
