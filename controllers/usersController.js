@@ -31,45 +31,21 @@ class UsersController extends BaseController {
       return res.status(400).json({ error: true, msg: err.message });
     }
   }
-  // async findOrPostUser(req, res) {
-  //   const { email, first_name, last_name } = req.body;
-  //   try {
-  //     let user = await this.model.findOne({ where: { email } });
-  //     if (user) {
-  //       return res.json(user.id);
-  //     }
-
-  //     user = await this.model.create({
-  //       email,
-  //       first_name,
-  //       last_name,
-  //     });
-
-  //     return res.json(user.id);
-  //   } catch (err) {
-  //     console.log(err.message);
-  //     return res.status(400).json({ error: true, msg: err.message });
-  //   }
-  // }
 
   async getUserByEmail(req, res) {
     const { email } = req.query;
-    console.log(email);
 
     try {
       const user = await this.model.findOne({
         where: { email: email },
       });
 
-      // return res.json(user);
       if (user) {
-        // res.status(200).send(`User found in DB`);
         res.json(user.id);
       } else {
         res.json(null);
       }
     } catch (err) {
-      console.log(err.message);
       return res.status(400).json({ error: true, msg: err.message });
     }
   }
@@ -128,8 +104,7 @@ class UsersController extends BaseController {
       res.status(201).json(savedRestaurant);
     } catch (error) {
       console.error(error);
-      // res.status(500).json({ message: "Internal server error" });
-      res.status(418).json({ error: true, msg: error.message });
+      res.status(400).json({ error: true, msg: error.message });
     }
   }
 
@@ -140,12 +115,11 @@ class UsersController extends BaseController {
     }
 
     try {
-      // res.status(200).json(savedRestaurants);
       const user = await this.model.findByPk(userId, {
         include: [
           {
             model: this.restaurantModel,
-            through: { attributes: [] }, // Exclude join table attributes
+            through: { attributes: [] },
             attributes: [
               "id",
               "name",
@@ -186,7 +160,7 @@ class UsersController extends BaseController {
       res.status(200).json(savedRestaurants);
     } catch (error) {
       console.error(error);
-      // res.status(500).json({ error: true, message: "Internal server error" });
+
       res.status(400).json({ error: true, msg: error.message });
     }
   }
@@ -223,7 +197,7 @@ class UsersController extends BaseController {
   async checkIfRestaurantSaved(req, res) {
     const { userId } = req.params;
     const { restaurantId } = req.query;
-    console.log(restaurantId);
+
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: "User id is missing or invalid" });
     }
