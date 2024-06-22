@@ -159,7 +159,7 @@ class UsersController extends BaseController {
 
       res.status(200).json(savedRestaurants);
     } catch (error) {
-      console.error(error);
+      console.error(error.msg);
 
       res.status(400).json({ error: true, msg: error.message });
     }

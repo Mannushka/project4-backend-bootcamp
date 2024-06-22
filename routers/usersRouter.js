@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 class UsersRouter {
-  constructor(controller) {
+  constructor(controller, checkJwt) {
     this.controller = controller;
+    this.checkJwt = checkJwt;
   }
   routes() {
     router.get("/", this.controller.getAll.bind(this.controller));
@@ -19,6 +20,7 @@ class UsersRouter {
     );
     router.get(
       "/:userId/my-restaurants",
+      this.checkJwt,
       this.controller.getSavedRestaurants.bind(this.controller)
     );
     router.delete(

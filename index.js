@@ -2,6 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const { auth } = require("express-oauth2-jwt-bearer");
+const checkJwt = auth({
+  audience: process.env.AUDIENCE,
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
+});
+
 const { Sequelize } = require("sequelize");
 const config = require("./config/database.js");
 const sequelize = new Sequelize(config.development);
@@ -64,7 +70,7 @@ const reviewsController = new ReviewsController(
 const reviewPhotosController = new ReviewPhotosController(review_photo, review);
 
 //initialize routers
-const usersRouter = new UsersRouter(usersController).routes();
+const usersRouter = new UsersRouter(usersController, checkJwt).routes();
 const restaurantsRouter = new RestaurantsRouter(restaurantsController).routes();
 const foodCategoriesRouter = new FoodCategoriesRouter(
   foodCategoriesController
