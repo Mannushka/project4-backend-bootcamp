@@ -16,6 +16,7 @@ class UsersRouter {
     router.delete("/:userId", this.controller.deleteUser.bind(this.controller));
     router.post(
       "/:userId/my-restaurants",
+      this.checkJwt,
       this.controller.createSavedRestaurant.bind(this.controller)
     );
     router.get(
@@ -25,11 +26,13 @@ class UsersRouter {
     );
     router.delete(
       "/:userId/my-restaurants",
+      this.checkJwt,
       this.controller.deleteSavedRestaurant.bind(this.controller)
     );
 
     router.get(
       "/:userId/check-saved-restaurant",
+      this.checkJwt,
       this.controller.checkIfRestaurantSaved.bind(this.controller)
     );
     return router;
