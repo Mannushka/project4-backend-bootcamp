@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 class ReviewsController {
-  constructor(controller) {
+  constructor(controller, checkJwt) {
     this.controller = controller;
+    this.checkJwt = checkJwt;
   }
   routes() {
     router.get("/", this.controller.getAll.bind(this.controller));
@@ -17,9 +18,14 @@ class ReviewsController {
       "/my-reviews",
       this.controller.getAllReviewsByUser.bind(this.controller)
     );
-    router.post("/", this.controller.postOne.bind(this.controller));
+    router.post(
+      "/",
+      this.checkJwt,
+      this.controller.postOne.bind(this.controller)
+    );
     router.delete(
       "/:reviewId",
+      this.checkJwt,
       this.controller.deleteReview.bind(this.controller)
     );
     return router;

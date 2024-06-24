@@ -76,7 +76,7 @@ const foodCategoriesRouter = new FoodCategoriesRouter(
   foodCategoriesController
 ).routes();
 const locationsRouter = new LocationsRouter(locationsController).routes();
-const reviewsRouter = new ReviewsRouter(reviewsController).routes();
+const reviewsRouter = new ReviewsRouter(reviewsController, checkJwt).routes();
 const reviewPhotosRouter = new ReviewPhotosRouter(
   reviewPhotosController
 ).routes();
