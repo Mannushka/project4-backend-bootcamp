@@ -10,6 +10,7 @@ class UsersRouter {
     router.get("/", this.controller.getAll.bind(this.controller));
     router.get(
       "/find-user",
+      this.checkJwt,
       this.controller.getUserByEmail.bind(this.controller)
     );
     router.post("/", this.controller.postUser.bind(this.controller));

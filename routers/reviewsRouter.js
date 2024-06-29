@@ -16,6 +16,7 @@ class ReviewsController {
     //protect the router!
     router.get(
       "/my-reviews",
+      this.checkJwt,
       this.controller.getAllReviewsByUser.bind(this.controller)
     );
     router.post(
