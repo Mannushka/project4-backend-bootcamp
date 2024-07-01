@@ -30,3 +30,7 @@ To set up the Postgres database, open the terminal, navigate to the root directo
 2.  Configure the application with the appropriate domain, client ID, and audience.
 3.  Update the AUDIENCE and ISSUER_BASE_URL variables in the .env file with the corresponding values from your Auth0 configuration.
 4.  Ensure that you use the same Auth0 credentials (domain, client ID, etc.) in both the frontend and backend of your application to maintain consistency
+
+## Built with
+
+![Static Badge](https://img.shields.io/badge/node.js-%23a2c11c?style=for-the-badge&logo=node.js&logoColor=%23a2c11c&labelColor=black&color=%23a2c11c) ![Static Badge](https://img.shields.io/badge/express.js-%23ffef6f?style=for-the-badge&logo=express&logoColor=%20%23ffef6f&labelColor=black&color=%20%23ffef6f) ![Static Badge](https://img.shields.io/badge/postgreSQL-%23005792?style=for-the-badge&logo=postgresql&logoColor=%20%2300bbf0&labelColor=black&color=%23005792) ![Static Badge](https://img.shields.io/badge/sequelize-%23ff9c6d?style=for-the-badge&logo=sequelize&logoColor=%23ff9c6d&labelColor=black&color=%23ff9c6d)
